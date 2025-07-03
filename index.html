@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNX高级班综合练习系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c1e3e, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .knx-logo {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 20px;
+            border-radius: 30px;
+        }
+        
+        .group-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background: #f0f7ff;
+            border-bottom: 1px solid #d1e0f0;
+        }
+        
+        .group-btn {
+            background: white;
+            border: 2px solid #3498db;
+            color: #2c3e50;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .group-btn:hover {
+            background: #e1f0fa;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .group-btn.active {
+            background: #3498db;
+            color: white;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .group-info {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 500;
+            border-bottom: 1px solid #e0e7ef;
+        }
+        
+        .exam-container {
+            padding: 20px 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 20px;
+        }
+        
+        .question {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e7ef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .question:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #3498db;
+        }
+        
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f5fa;
+        }
+        
+        .question-number {
+            background: #3498db;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-right: 15px;
+        }
+        
+        .question-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .option {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+        
+        .option:hover {
+            background: #f5f9ff;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background: #e1f0fa;
+            border-color: #3498db;
+        }
+        
+        .answer-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #f1f8e9;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .answer-container.show {
+            max-height: 300px;
+        }
+        
+        .answer-content {
+            padding: 15px;
+        }
+        
+        .answer-title {
+            display: flex;
+            align-items: center;
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            gap: 10px;
+        }
+        
+        .explanation {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #27ae60;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #27ae60, #219653);
+            color: white;
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.4);
+        }
+        
+        .result-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .result-panel.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .result-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            padding: 40px;
+            text-align: center;
+            transform: translateY(40px);
+            transition: transform 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-panel.show .result-content {
+            transform: translateY(0);
+        }
+        
+        .result-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .score {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 30px 0;
+            text-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .result-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            font-size: 1.3rem;
+        }
+        
+        .correct-answers {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+        
+        .incorrect-answers {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+        
+        .feedback {
+            font-size: 1.4rem;
+            margin: 30px 0;
+            color: #2c3e50;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        
+        .knx-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 992px) {
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .exam-container {
+                max-height: 500px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.05rem;
+            }
+            
+            .options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .result-title {
+                font-size: 2rem;
+            }
+            
+            .score {
+                font-size: 4rem;
+            }
+        }
+        
+        .knx-pattern {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(52, 152, 219, 0.1),
+                rgba(52, 152, 219, 0.1) 10px,
+                rgba(41, 128, 185, 0.1) 10px,
+                rgba(41, 128, 185, 0.1) 20px
+            );
+            opacity: 0.5;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 15px 0;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .question-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #3498db;
+        }
+        
+        .question-status.answered {
+            background: #3498db;
+        }
+        
+        .score-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e67e22;
+        }
+        
+        .difficulty {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .difficulty.easy {
+            background: #e8f7ef;
+            color: #27ae60;
+        }
+        
+        .difficulty.medium {
+            background: #fff8e1;
+            color: #f39c12;
+        }
+        
+        .difficulty.hard {
+            background: #fcebec;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-graduation-cap"></i> KNX高级班综合练习系统</h1>
+            <p>5组练习共125道KNX高级班真题，每题4分，答对得4分，答错扣2分，不答0分，50分及格</p>
+            <div class="knx-logo">
+                <i class="fas fa-bolt"></i> KNX高级认证备考
+            </div>
+        </header>
+        
+        <div class="stats-bar">
+            <div class="stats-item">
+                <i class="fas fa-check-circle"></i> 正确: <span id="correct-count">0</span>
+            </div>
+            <div class="stats-item">
+                <i class="fas fa-times-circle"></i> 错误: <span id="incorrect-count">0</span>
+            </div>
+            <div class="stats-item">
+                <i class="fas fa-percentage"></i> 完成: <span id="progress">0</span>%
+            </div>
+            <div class="stats-item score-display">
+                <i class="fas fa-star"></i> 当前得分: <span id="current-score">0</span>
+            </div>
+        </div>
+        
+        <div class="group-selector">
+            <button class="group-btn active" data-group="0">
+                <i class="fas fa-network-wired"></i> 系统架构
+            </button>
+            <button class="group-btn" data-group="1">
+                <i class="fas fa-satellite-dish"></i> 通信协议
+            </button>
+            <button class="group-btn" data-group="2">
+                <i class="fas fa-cogs"></i> ETS配置
+            </button>
+            <button class="group-btn" data-group="3">
+                <i class="fas fa-thermometer-half"></i> 专业应用
+            </button>
+            <button class="group-btn" data-group="4">
+                <i class="fas fa-tools"></i> 诊断维护
+            </button>
+        </div>
+        
+        <div class="group-info">
+            当前练习: <span id="current-group">系统架构</span> | 题目数量: <span id="question-count">25</span>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+        
+        <div class="exam-container" id="exam-container">
+            <!-- 题目将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="check-answers">
+                <i class="fas fa-check-circle"></i> 检查答案
+            </button>
+            <button class="btn btn-primary" id="reset-group">
+                <i class="fas fa-redo"></i> 重置本组
+            </button>
+            <button class="btn btn-success" id="submit-group">
+                <i class="fas fa-paper-plane"></i> 提交本组
+            </button>
+        </div>
+    </div>
+    
+    <div class="result-panel" id="result-panel">
+        <div class="result-content">
+            <h2 class="result-title">练习结果</h2>
+            <div class="score" id="final-score">0分</div>
+            <div class="feedback" id="feedback-message">继续加油！</div>
+            
+            <div class="result-stats">
+                <div class="correct-answers">
+                    <i class="fas fa-check-circle"></i> 正确: <span id="result-correct">0</span>
+                </div>
+                <div class="incorrect-answers">
+                    <i class="fas fa-times-circle"></i> 错误: <span id="result-incorrect">0</span>
+                </div>
+            </div>
+            
+            <div class="feedback">
+                <i class="fas fa-info-circle"></i> 得分规则: 每题4分，答对得4分，答错扣2分，不答0分
+            </div>
+            
+            <button class="btn btn-primary" id="close-result">
+                <i class="fas fa-arrow-left"></i> 返回练习
+            </button>
+            
+            <div class="knx-badge">
+                <i class="fas fa-certificate"></i> KNX高级认证备考系统
+            </div>
+            <div class="knx-pattern"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 生成125道KNX判断题（5组，每组25题）
+        const generateKNXQuestions = () => {
+            // 系统架构与拓扑设计（25题）
+            const group1 = [
+                { text: "KNX TP1总线的物理层采用双绞线，其信号电压是DC 24V。", answer: false, explanation: "错误。KNX TP1总线信号电压是DC ~29V (21-30V)，不是24V。", difficulty: "easy" },
+                { text: "在大型KNX项目中，主干线(Backbone Line)与支线(Main Line)之间必须使用线路耦合器(Line Coupler)连接。", answer: true, explanation: "正确。线路耦合器用于隔离主干线和支线，提高系统稳定性。", difficulty: "medium" },
+                { text: "KNX系统最多可支持15个区域(Area)，每个区域最多15条线路(Line)。", answer: true, explanation: "正确。KNX系统架构允许最多15个区域，每个区域最多15条线路。", difficulty: "hard" },
+                { text: "使用KNXnet/IP Router连接不同区域的TP1总线时，这些总线必须使用相同的物理地址区域(Area)。", answer: false, explanation: "错误。KNXnet/IP Router可以连接不同区域的TP1总线。", difficulty: "medium" },
+                { text: "在ETS中配置线路耦合器时，必须设置其下游线路的线路地址(Line Address)。", answer: true, explanation: "正确。线路耦合器需要配置下游线路地址用于报文过滤。", difficulty: "medium" },
+                { text: "KNX TP1总线的最大长度不应超过1000米。", answer: true, explanation: "正确。KNX TP1总线最大推荐长度为1000米。", difficulty: "easy" },
+                { text: "在KNX系统中，IP路由器可以替代所有线路耦合器。", answer: false, explanation: "错误。IP路由器用于IP网络，不能完全替代线路耦合器。", difficulty: "medium" },
+                { text: "KNX设备的总线电流消耗通常为10-30mA。", answer: true, explanation: "正确。大多数KNX设备功耗在10-30mA范围内。", difficulty: "easy" },
+                { text: "区域耦合器(Area Coupler)用于连接同一区域内的不同线路。", answer: false, explanation: "错误。区域耦合器用于连接不同区域。", difficulty: "hard" },
+                { text: "某支线连接32个设备（单设备功耗12mA），总线电源标称640mA，需要冗余电源。", answer: true, explanation: "正确。总功耗384mA，但需预留30%裕量并考虑故障冗余。", difficulty: "medium" },
+                { text: "主干耦合器（BC）与线路耦合器（LC）的关键区别是BC过滤域地址（Area），LC过滤线路地址（Line）。", answer: true, explanation: "正确。BC基于区域地址过滤，LC基于线路地址过滤。", difficulty: "hard" },
+                { text: "KNX系统支持最多256个设备在同一线路上工作。", answer: false, explanation: "错误。KNX TP1线路最多支持64个设备（推荐不超过50个）。", difficulty: "medium" },
+                { text: "KNX线路中继器（LR）可以扩展线路长度到2000米。", answer: true, explanation: "正确。使用线路中继器后，总线长度可扩展到2000米。", difficulty: "medium" },
+                { text: "KNX TP1总线使用双绞线的所有4对线进行通信。", answer: false, explanation: "错误。KNX TP1总线仅使用一对线（红/黑）进行通信。", difficulty: "easy" },
+                { text: "在KNX系统中，区域0（Area 0）是必须使用的。", answer: false, explanation: "错误。区域0是默认区域，但项目可以只使用其他区域。", difficulty: "hard" },
+                { text: "KNX IP路由器可以同时连接最多8条TP1总线。", answer: true, explanation: "正确。KNXnet/IP路由器最多支持8个TP接口。", difficulty: "hard" },
+                { text: "KNX系统电源必须提供29V DC ±10%的电压。", answer: true, explanation: "正确。KNX规范要求电源电压为29V DC ±10%。", difficulty: "easy" },
+                { text: "在KNX拓扑结构中，主干线（Backbone）只能使用TP1介质。", answer: false, explanation: "错误。主干线可以使用TP1、IP或光纤介质。", difficulty: "medium" },
+                { text: "KNX设备可以热插拔（在总线运行时添加或移除）。", answer: true, explanation: "正确。KNX支持热插拔设备，但建议在断电时操作。", difficulty: "easy" },
+                { text: "一条KNX线路上可以安装多个总线电源。", answer: true, explanation: "正确。多个电源可以并联使用，需设置主/从模式。", difficulty: "medium" },
+                { text: "KNX RF系统使用2.4GHz频段进行无线通信。", answer: false, explanation: "错误。KNX RF使用868MHz频段（欧洲标准）。", difficulty: "medium" },
+                { text: "KNX PL110（电力线）通信速率是1200bps。", answer: true, explanation: "正确。KNX PL110通信速率为1200波特率。", difficulty: "hard" },
+                { text: "KNX系统的最小物理地址是0.0.0。", answer: false, explanation: "错误。物理地址从0.0.1开始，0.0.0是保留地址。", difficulty: "hard" },
+                { text: "在ETS中，线路（Line）编号范围是0-15。", answer: true, explanation: "正确。每个区域内线路地址范围是0-15。", difficulty: "easy" },
+                { text: "KNX设备地址1.15.255是有效的物理地址。", answer: true, explanation: "正确。区域1-15，线路0-15，设备1-255都是有效地址。", difficulty: "medium" }
+            ];
+            
+            // 通信协议与安全机制（25题）
+            const group2 = [
+                { text: "KNX Data Secure（DS）可保护TP1/RF介质通信。", answer: true, explanation: "正确。DS覆盖TP1、RF等传统介质点对点通信。", difficulty: "medium" },
+                { text: "KNX总线访问采用CSMA/CA机制避免报文冲突。", answer: true, explanation: "正确。载波侦听多路访问/冲突避让技术。", difficulty: "hard" },
+                { text: "组地址1/2/3中数字2代表中间组。", answer: true, explanation: "正确。三级结构：主组/中间组/子组。", difficulty: "easy" },
+                { text: "KNX报文中的优先级字段只有两个值：低优先级和高优先级。", answer: false, explanation: "错误。KNX有四种优先级：系统、报警、高、低。", difficulty: "hard" },
+                { text: "KNX组地址0/0/0是有效的组地址。", answer: false, explanation: "错误。0/0/0是保留地址，不可用。", difficulty: "medium" },
+                { text: "KNX物理地址的结构是Area.Line.Device，其中Device地址范围是1-255。", answer: true, explanation: "正确。设备地址范围是1-255。", difficulty: "easy" },
+                { text: "KNX IoT Security基于IPsec协议实现。", answer: false, explanation: "错误。KNX IoT Security使用DTLS协议。", difficulty: "hard" },
+                { text: "KNX组地址采用两级结构时，主组范围是0-31。", answer: false, explanation: "错误。两级结构主组范围是0-15。", difficulty: "medium" },
+                { text: "KNX Secure设备使用128位AES加密算法。", answer: true, explanation: "正确。KNX Secure使用AES-128-CCM加密算法。", difficulty: "hard" },
+                { text: "KNX TP1总线通信速率是9600bps。", answer: true, explanation: "正确。TP1标准通信速率是9600bps。", difficulty: "easy" },
+                { text: "KNX报文帧中，源地址字段长度为16位。", answer: true, explanation: "正确。源地址（物理地址）为16位。", difficulty: "hard" },
+                { text: "在KNX系统中，广播组地址是15/7/255。", answer: false, explanation: "错误。广播组地址是0/0/0（保留地址）。", difficulty: "medium" },
+                { text: "KNX报文的最大长度是23字节。", answer: false, explanation: "错误。KNX TP1报文最大长度是255字节。", difficulty: "hard" },
+                { text: "KNX心跳报文（L_Busmon.ind）用于监控总线活动。", answer: true, explanation: "正确。心跳报文用于总线监控和诊断。", difficulty: "medium" },
+                { text: "KNX IP Secure使用TCP协议进行安全通信。", answer: false, explanation: "错误。KNX IP Secure使用UDP协议。", difficulty: "hard" },
+                { text: "KNX组地址采用三级结构时，最多支持65536个组地址。", answer: false, explanation: "错误。三级结构最多支持32768个组地址（0/0/0保留）。", difficulty: "hard" },
+                { text: "KNX RF协议使用CSMA/CA机制避免冲突。", answer: true, explanation: "正确。KNX RF也使用CSMA/CA机制。", difficulty: "medium" },
+                { text: "KNX系统时间同步使用专门的组地址进行广播。", answer: true, explanation: "正确。时间同步通过特定的组地址广播实现。", difficulty: "medium" },
+                { text: "KNX设备序列号（S/N）是物理地址的一部分。", answer: false, explanation: "错误。序列号是设备唯一标识，与物理地址无关。", difficulty: "easy" },
+                { text: "KNX Data Secure需要每个设备单独配置安全密钥。", answer: true, explanation: "正确。每个安全设备需要单独配置密钥。", difficulty: "medium" },
+                { text: "KNX组地址1/1/1和1/1/2属于同一个中间组。", answer: true, explanation: "正确。中间组相同（1/1）。", difficulty: "easy" },
+                { text: "KNX报文优先级中，系统优先级高于报警优先级。", answer: true, explanation: "正确。优先级顺序：系统 > 报警 > 高 > 低。", difficulty: "hard" },
+                { text: "KNX TP1总线使用差分信号传输数据。", answer: true, explanation: "正确。KNX使用差分信号提高抗干扰能力。", difficulty: "medium" },
+                { text: "KNX设备在发送报文前需要等待随机时间（0-51ms）。", answer: true, explanation: "正确。随机延迟用于避免冲突。", difficulty: "hard" },
+                { text: "KNX组地址0/0/1是有效的全局组地址。", answer: true, explanation: "正确。0/0/1是有效的全局组地址。", difficulty: "medium" }
+            ];
+            
+            // ETS高级配置与应用（25题）
+            const group3 = [
+                { text: "如何在ETS中实现温度>25℃时自动关窗帘且避免变量？用比较器模块直连温度输入与窗帘关命令。", answer: true, explanation: "正确。比较器模块可以直接实现此逻辑。", difficulty: "medium" },
+                { text: "更换故障设备时，需备份.vdk文件快速恢复参数。", answer: true, explanation: "正确。*.vdk为设备应用备份文件。", difficulty: "easy" },
+                { text: "ETS组地址监视器能捕获其他线路的报文。", answer: false, explanation: "错误。仅限当前接口所在线路。", difficulty: "medium" },
+                { text: "在ETS中，下载全部操作会覆盖设备的所有参数和应用程序。", answer: true, explanation: "正确。下载全部会覆盖设备配置。", difficulty: "medium" },
+                { text: "ETS6是第一个支持KNX Secure的ETS版本。", answer: false, explanation: "错误。ETS5就支持KNX Secure。", difficulty: "easy" },
+                { text: "ETS逻辑编辑器中的场景模块可以设置渐变时间。", answer: true, explanation: "正确。场景模块支持设置渐变时间。", difficulty: "medium" },
+                { text: "在ETS中，物理地址冲突会导致设备无法通信。", answer: true, explanation: "正确。地址冲突是常见通信故障原因。", difficulty: "easy" },
+                { text: "ETS项目文件（.knxproj）包含设备应用程序代码。", answer: false, explanation: "错误。.knxproj包含配置信息，应用程序在.vdk文件中。", difficulty: "hard" },
+                { text: "ETS支持通过OPC UA接口与第三方系统集成。", answer: true, explanation: "正确。ETS支持OPC UA接口。", difficulty: "hard" },
+                { text: "在ETS中，可以同时为多个设备批量下载参数。", answer: true, explanation: "正确。ETS支持批量下载功能。", difficulty: "medium" },
+                { text: "ETS逻辑编辑器中的定时器模块可以设置随机延迟。", answer: true, explanation: "正确。定时器模块支持随机延迟功能。", difficulty: "medium" },
+                { text: "ETS数据库中的厂商代码是4位十六进制数。", answer: true, explanation: "正确。厂商代码如M-00A0。", difficulty: "hard" },
+                { text: "在ETS中，组地址可以分配给多个通信对象。", answer: true, explanation: "正确。一个组地址可以被多个设备使用。", difficulty: "easy" },
+                { text: "ETS项目验证功能可以检测未绑定的组地址输入/输出。", answer: true, explanation: "正确。项目验证会检查未绑定的组地址。", difficulty: "medium" },
+                { text: "ETS支持通过KNX Secure进行安全编程。", answer: true, explanation: "正确。ETS支持安全设备的编程和参数化。", difficulty: "hard" },
+                { text: "在ETS中，移动设备到另一线路时，系统会自动更新物理地址。", answer: true, explanation: "正确。ETS会自动分配新线路上的可用地址。", difficulty: "medium" },
+                { text: "ETS中的拓扑视图可以显示总线电压和电流。", answer: false, explanation: "错误。拓扑视图显示设备连接关系，不显示电气参数。", difficulty: "easy" },
+                { text: "ETS支持导入/导出组地址表为CSV格式。", answer: true, explanation: "正确。ETS支持CSV格式的组地址表导入导出。", difficulty: "easy" },
+                { text: "ETS逻辑编辑器中的变量可以存储浮点数。", answer: true, explanation: "正确。变量支持多种数据类型包括浮点数。", difficulty: "medium" },
+                { text: "ETS诊断视图可以显示设备通信错误计数器。", answer: true, explanation: "正确。诊断视图提供详细的错误统计信息。", difficulty: "hard" },
+                { text: "ETS支持多语言界面，包括中文。", answer: true, explanation: "正确。ETS提供多语言支持。", difficulty: "easy" },
+                { text: "在ETS中，可以定义设备特定的参数集（Parameter Sets）。", answer: true, explanation: "正确。ETS支持为设备定义多个参数集。", difficulty: "hard" },
+                { text: "ETS支持通过XML文件导入设备数据库。", answer: true, explanation: "正确。ETS支持XML格式的设备数据库导入。", difficulty: "medium" },
+                { text: "ETS项目备份文件包含所有设备的应用程序。", answer: false, explanation: "错误。项目文件包含配置信息，应用程序需要单独备份。", difficulty: "hard" }
+            ];
+            
+            // HVAC与照明控制（25题）
+            const group4 = [
+                { text: "单个KNX-DALI网关最多控制64个镇流器（单个通道）。", answer: true, explanation: "正确。单DALI通道支持64地址。", difficulty: "easy" },
+                { text: "无位置传感器时，百叶窗执行器需设置运行时间参数计算位置。", answer: true, explanation: "正确。通过运行时间推算位置。", difficulty: "medium" },
+                { text: "控制传统锅炉启停，KNX温控器需连接继电器模块。", answer: true, explanation: "正确。开关型负载需继电器。", difficulty: "medium" },
+                { text: "KNX调光执行器可以控制0-10V和DALI照明设备。", answer: true, explanation: "正确。KNX有支持多种协议的调光执行器。", difficulty: "medium" },
+                { text: "DALI系统中的场景调用需要KNX-DALI网关的特殊配置。", answer: true, explanation: "正确。需要配置网关的场景调用功能。", difficulty: "hard" },
+                { text: "KNX HVAC控制器可以直接读取Modbus RTU设备的温度值。", answer: false, explanation: "错误。需要KNX-Modbus网关进行协议转换。", difficulty: "hard" },
+                { text: "在KNX系统中实现恒照度控制需要光照度传感器。", answer: true, explanation: "正确。恒照度控制需要光照度输入。", difficulty: "medium" },
+                { text: "KNX百叶窗控制支持阳光跟踪算法。", answer: true, explanation: "正确。通过逻辑模块可实现阳光跟踪。", difficulty: "hard" },
+                { text: "KNX恒温阀执行器通常使用0-10V控制信号。", answer: false, explanation: "错误。恒温阀执行器通常使用开关或PWM控制。", difficulty: "medium" },
+                { text: "KNX照明场景模块最多支持64个场景。", answer: false, explanation: "错误。KNX场景模块通常支持10-20个场景。", difficulty: "easy" },
+                { text: "KNX存在传感器可以用于照明和HVAC控制。", answer: true, explanation: "正确。存在传感器可触发多种控制逻辑。", difficulty: "easy" },
+                { text: "DALI系统中的组控制可以通过KNX组地址触发。", answer: true, explanation: "正确。KNX组地址可映射到DALI组命令。", difficulty: "medium" },
+                { text: "KNX HVAC控制器支持PI（比例积分）控制算法。", answer: true, explanation: "正确。高级HVAC控制器支持PID控制。", difficulty: "hard" },
+                { text: "KNX窗帘执行器需要设置上下行程时间参数。", answer: true, explanation: "正确。需要分别设置开启和关闭行程时间。", difficulty: "medium" },
+                { text: "在KNX系统中，单个房间温控器可以控制多个HVAC区域。", answer: false, explanation: "错误。一个温控器通常控制一个区域。", difficulty: "easy" },
+                { text: "KNX开关执行器可以控制LED灯带的RGB颜色。", answer: false, explanation: "错误。需要专门的RGB控制器。", difficulty: "easy" },
+                { text: "KNX DALI网关可以读取镇流器的故障状态。", answer: true, explanation: "正确。DALI网关可以获取设备状态信息。", difficulty: "medium" },
+                { text: "KNX恒温阀执行器需要设置温度设定值和实际值。", answer: true, explanation: "正确。需要设置目标温度和反馈温度。", difficulty: "hard" },
+                { text: "在KNX中实现HVAC模式切换（制冷/制热）需要额外的模式选择模块。", answer: true, explanation: "正确。通常需要模式选择开关或逻辑模块。", difficulty: "medium" },
+                { text: "KNX存在传感器的工作范围通常是8米半径。", answer: true, explanation: "正确。典型存在传感器覆盖范围是8米半径。", difficulty: "easy" },
+                { text: "KNX调光执行器支持切相调光和0-10V调光。", answer: true, explanation: "正确。KNX调光执行器支持多种调光技术。", difficulty: "medium" },
+                { text: "KNX HVAC控制器可以直接控制变频压缩机的转速。", answer: false, explanation: "错误。需要专门的变频器控制器。", difficulty: "hard" },
+                { text: "在KNX系统中，气象站数据可以用于百叶窗自动控制。", answer: true, explanation: "正确。气象数据可用于优化百叶窗控制。", difficulty: "medium" },
+                { text: "KNX DALI网关支持单灯控制、分组控制和场景控制。", answer: true, explanation: "正确。DALI网关支持多种控制模式。", difficulty: "easy" },
+                { text: "KNX恒温阀执行器需要定期校准以确保精度。", answer: true, explanation: "正确。建议每年校准一次以保证控制精度。", difficulty: "hard" }
+            ];
+            
+            // 诊断与维护（25题）
+            const group5 = [
+                { text: "总线分析仪不可诊断组地址绑定错误。", answer: true, explanation: "正确。绑定错误属逻辑层，需ETS验证。", difficulty: "easy" },
+                { text: "新设备无法被ETS发现，可能原因是物理地址冲突、未进入编程模式、总线电压异常。", answer: true, explanation: "正确。这些都是常见原因。", difficulty: "medium" },
+                { text: "大型项目中组地址表对调试作用最大。", answer: true, explanation: "正确。组地址表用于绑定验证与故障定位。", difficulty: "medium" },
+                { text: "KNX总线分析仪可以测量总线电压、信号波形和电流消耗。", answer: true, explanation: "正确。总线分析仪是诊断物理层问题的必备工具。", difficulty: "easy" },
+                { text: "ETS诊断功能可以显示设备的报文错误计数器。", answer: true, explanation: "正确。错误计数器有助于定位通信问题。", difficulty: "hard" },
+                { text: "KNX设备指示灯状态（红/绿）可以用于初步诊断。", answer: true, explanation: "正确。指示灯状态反映设备工作状态。", difficulty: "easy" },
+                { text: "在KNX系统中，终端电阻故障会导致信号反射。", answer: true, explanation: "正确。终端电阻缺失会导致信号反射问题。", difficulty: "medium" },
+                { text: "KNX总线电压低于21V会导致通信不稳定。", answer: true, explanation: "正确。规范要求总线电压在21-30V之间。", difficulty: "easy" },
+                { text: "ETS项目验证可以检测物理地址冲突。", answer: true, explanation: "正确。项目验证会检查地址冲突问题。", difficulty: "medium" },
+                { text: "KNX系统日志可以记录所有总线报文。", answer: false, explanation: "错误。系统日志只记录关键事件，不是所有报文。", difficulty: "hard" },
+                { text: "KNX设备固件升级可以通过ETS进行。", answer: true, explanation: "正确。ETS支持设备固件升级。", difficulty: "medium" },
+                { text: "在KNX系统中，耦合器过滤设置错误会导致报文丢失。", answer: true, explanation: "正确。过滤设置错误是常见通信故障原因。", difficulty: "hard" },
+                { text: "KNX总线短路会导致电源保护关闭输出。", answer: true, explanation: "正确。电源短路保护是标准功能。", difficulty: "easy" },
+                { text: "ETS可以读取设备的应用程序版本信息。", answer: true, explanation: "正确。ETS可以读取设备详细信息。", difficulty: "medium" },
+                { text: "KNX设备复位操作会清除所有参数和应用程序。", answer: false, explanation: "错误。复位通常只清除参数，不删除应用程序。", difficulty: "hard" },
+                { text: "在大型项目中，线路图文档对维护作用最大。", answer: true, explanation: "正确。线路图帮助定位物理连接问题。", difficulty: "medium" },
+                { text: "KNX总线干扰源包括变频器、大功率电机和无线设备。", answer: true, explanation: "正确。这些设备可能产生电磁干扰。", difficulty: "easy" },
+                { text: "ETS组监视器功能可以实时显示特定组地址的报文。", answer: true, explanation: "正确。组监视器是诊断通信问题的有用工具。", difficulty: "medium" },
+                { text: "KNX设备平均故障间隔时间（MTBF）通常为10年以上。", answer: true, explanation: "正确。KNX设备设计寿命长，可靠性高。", difficulty: "hard" },
+                { text: "在KNX系统中，接地不良会导致通信不稳定。", answer: true, explanation: "正确。良好的接地对系统稳定性很重要。", difficulty: "medium" },
+                { text: "KNX总线分析仪可以解码应用层协议。", answer: true, explanation: "正确。高级总线分析仪支持协议解码。", difficulty: "hard" },
+                { text: "ETS诊断视图可以显示设备的物理地址和状态。", answer: true, explanation: "正确。诊断视图提供设备详细信息。", difficulty: "easy" },
+                { text: "KNX系统备份应包括项目文件、设备应用程序和参数设置。", answer: true, explanation: "正确。全面备份确保系统可恢复。", difficulty: "medium" },
+                { text: "在KNX系统中，电源纹波过大会导致通信错误。", answer: true, explanation: "正确。电源质量对系统稳定性至关重要。", difficulty: "hard" },
+                { text: "KNX设备温度过高会导致性能下降或故障。", answer: true, explanation: "正确。高温是电子设备的主要故障原因之一。", difficulty: "easy" }
+            ];
+            
+            return [group1, group2, group3, group4, group5];
+        };
+        
+        // 初始化变量
+        const questionGroups = generateKNXQuestions();
+        let currentGroupIndex = 0;
+        let userAnswers = Array(5).fill().map(() => Array(25).fill(null));
+        let answeredCount = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        
+        // 组名称映射
+        const groupNames = ["系统架构", "通信协议", "ETS配置", "专业应用", "诊断维护"];
+        
+        // 页面加载时渲染当前组题目
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGroupQuestions();
+            
+            // 添加事件监听器
+            document.getElementById('check-answers').addEventListener('click', checkAnswers);
+            document.getElementById('reset-group').addEventListener('click', resetGroup);
+            document.getElementById('submit-group').addEventListener('click', submitGroup);
+            document.getElementById('close-result').addEventListener('click', () => {
+                document.getElementById('result-panel').classList.remove('show');
+            });
+            
+            // 添加组选择事件
+            document.querySelectorAll('.group-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 更新组索引
+                    currentGroupIndex = parseInt(this.dataset.group);
+                    
+                    // 更新UI
+                    document.querySelectorAll('.group-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    document.getElementById('current-group').textContent = groupNames[currentGroupIndex];
+                    
+                    // 渲染新组的题目
+                    renderGroupQuestions();
+                });
+            });
+        });
+        
+        // 渲染当前组的所有题目
+        function renderGroupQuestions() {
+            const container = document.getElementById('exam-container');
+            const group = questionGroups[currentGroupIndex];
+            
+            let questionsHTML = '<div class="questions-grid">';
+            
+            group.forEach((question, index) => {
+                const isAnswered = userAnswers[currentGroupIndex][index] !== null;
+                const difficultyClass = question.difficulty || "medium";
+                const difficultyText = {
+                    "easy": "★基础",
+                    "medium": "★★进阶",
+                    "hard": "★★★专家"
+                }[difficultyClass] || "";
+                
+                questionsHTML += `
+                    <div class="question">
+                        <div class="question-header">
+                            <div class="question-number">${index + 1}</div>
+                            <div class="question-text">${question.text}
+                                <span class="difficulty ${difficultyClass}">${difficultyText}</span>
+                            </div>
+                            <div class="question-status ${isAnswered ? 'answered' : ''}"></div>
+                        </div>
+                        <div class="options">
+                            <div class="option true-option" data-index="${index}" data-answer="true">
+                                <i class="fas fa-check"></i> 正确
+                            </div>
+                            <div class="option false-option" data-index="${index}" data-answer="false">
+                                <i class="fas fa-times"></i> 错误
+                            </div>
+                        </div>
+                        <div class="answer-container" id="answer-${currentGroupIndex}-${index}">
+                            <div class="answer-content">
+                                <div class="answer-title">
+                                    <i class="fas fa-lightbulb"></i> 答案与解析
+                                </div>
+                                <div class="explanation">
+                                    ${question.explanation}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            questionsHTML += '</div>';
+            container.innerHTML = questionsHTML;
+            
+            // 更新组信息
+            document.getElementById('current-group').textContent = groupNames[currentGroupIndex];
+            document.getElementById('question-count').textContent = group.length;
+            
+            // 更新答题状态
+            updateStats();
+            
+            // 如果用户已选择答案，高亮显示
+            group.forEach((_, index) => {
+                const userAnswer = userAnswers[currentGroupIndex][index];
+                if (userAnswer !== null) {
+                    const options = document.querySelectorAll(`[data-index="${index}"]`);
+                    options[userAnswer ? 0 : 1].classList.add('selected');
+                }
+            });
+            
+            // 添加选项选择事件
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    const answer = this.dataset.answer === 'true';
+                    
+                    // 更新用户答案
+                    userAnswers[currentGroupIndex][index] = answer;
+                    
+                    // 更新UI
+                    const questionElement = this.closest('.question');
+                    questionElement.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // 更新答题状态
+                    questionElement.querySelector('.question-status').classList.add('answered');
+                    
+                    // 更新统计
+                    updateStats();
+                });
+            });
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            const group = questionGroups[currentGroupIndex];
+            let answered = 0;
+            let correct = 0;
+            let score = 0;
+            
+            for (let i = 0; i < group.length; i++) {
+                if (userAnswers[currentGroupIndex][i] !== null) {
+                    answered++;
+                    
+                    if (userAnswers[currentGroupIndex][i] === group[i].answer) {
+                        correct++;
+                        score += 4; // 答对加4分
+                    } else {
+                        score -= 2; // 答错扣2分
+                    }
+                }
+            }
+            
+            // 分数不能为负数
+            score = Math.max(0, score);
+            
+            const progress = Math.round((answered / group.length) * 100);
+            
+            document.getElementById('correct-count').textContent = correct;
+            document.getElementById('incorrect-count').textContent = answered - correct;
+            document.getElementById('progress').textContent = progress;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('current-score').textContent = score;
+        }
+        
+        // 检查答案
+        function checkAnswers() {
+            const group = questionGroups[currentGroupIndex];
+            let answered = 0;
+            
+            for (let i = 0; i < group.length; i++) {
+                if (userAnswers[currentGroupIndex][i] !== null) {
+                    answered++;
+                    const answerContainer = document.getElementById(`answer-${currentGroupIndex}-${i}`);
+                    answerContainer.classList.add('show');
+                }
+            }
+            
+            if (answered === 0) {
+                alert('请先回答一些问题！');
+            } else {
+                alert(`已显示所有题目的解析！`);
+            }
+        }
+        
+        // 重置当前组
+        function resetGroup() {
+            if (confirm('确定要重置当前练习组的答案吗？')) {
+                userAnswers[currentGroupIndex] = Array(25).fill(null);
+                renderGroupQuestions();
+            }
+        }
+        
+        // 提交当前组练习
+        function submitGroup() {
+            const group = questionGroups[currentGroupIndex];
+            let answered = 0;
+            let correct = 0;
+            let score = 0;
+            
+            for (let i = 0; i < group.length; i++) {
+                if (userAnswers[currentGroupIndex][i] !== null) {
+                    answered++;
+                    
+                    if (userAnswers[currentGroupIndex][i] === group[i].answer) {
+                        correct++;
+                        score += 4; // 答对加4分
+                    } else {
+                        score -= 2; // 答错扣2分
+                    }
+                }
+            }
+            
+            // 分数不能为负数
+            score = Math.max(0, score);
+            
+            // 显示结果面板
+            document.getElementById('final-score').textContent = `${score}分`;
+            document.getElementById('result-correct').textContent = correct;
+            document.getElementById('result-incorrect').textContent = answered - correct;
+            
+            // 设置反馈消息
+            let feedback = '';
+            if (score >= 90) {
+                feedback = '太棒了！您的KNX知识掌握得非常扎实，考试一定顺利通过！';
+            } else if (score >= 70) {
+                feedback = '很好！您对KNX高级知识有很好的理解，再复习一下薄弱环节就能轻松通过考试。';
+            } else if (score >= 50) {
+                feedback = '及格！但还需要加强对KNX高级概念的理解，建议重点复习答错的题目。';
+            } else {
+                feedback = '需要更多努力！请系统复习KNX高级班资料，特别关注核心概念和错题。';
+            }
+            document.getElementById('feedback-message').textContent = feedback;
+            
+            // 显示结果面板
+            document.getElementById('result-panel').classList.add('show');
+        }
+    </script>
+</body>
+</html>
